@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,17 +8,19 @@
     <style>
         .container {
             max-width: 800px;
-            margin:30px auto;
-            box-shadow: 0 0 4px 0 rgba(0,0,0,.3);
+            margin: 30px auto;
+            box-shadow: 0 0 4px 0 rgba(0, 0, 0, .3);
             padding: 20px;
             border-radius: 4px;
         }
-        .carousel{
+
+        .carousel {
             position: relative;
             height: 200px;
         }
-        .carousel .panels>a{
-            position:absolute;
+
+        .carousel .panels>a {
+            position: absolute;
             width: 100%;
             height: 100%;
             display: flex;
@@ -27,78 +30,95 @@
             opacity: 0;
             transition: all .3s;
         }
+
         .carousel .panels>a.active {
             opacity: 1;
+            z-index: 3;
         }
-        .carousel .panels>a:nth-child(1){
-           background:#ccc url(images/1.jpg) center no-repeat; 
+
+        .carousel .panels>a:nth-child(1) {
+            background: #ccc url(images/1.jpg) center no-repeat;
         }
-        .carousel .panels>a:nth-child(2){
-            background:#ccc url(images/2.jpg) center no-repeat;
+
+        .carousel .panels>a:nth-child(2) {
+            background: #ccc url(images/2.jpg) center no-repeat;
         }
-        .carousel .panels>a:nth-child(3){
-            background:#ccc url(images/3.jpg) center no-repeat;
+
+        .carousel .panels>a:nth-child(3) {
+            background: #ccc url(images/3.jpg) center no-repeat;
         }
-        .carousel .panels>a:nth-child(4){
-            background:#ccc url(images/4.jpg) center no-repeat;
+
+        .carousel .panels>a:nth-child(4) {
+            background: #ccc url(images/4.jpg) center no-repeat;
         }
+
         .carousel .arrow {
-            position:absolute;
-            top:50%;
+            position: absolute;
+            top: 50%;
             width: 30px;
             height: 30px;
             border-radius: 50%;
             outline: none;
-            border:none;
-            background:rgba(31,45,61,.11);
+            border: none;
+            background: rgba(31, 45, 61, .11);
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
             transition: all .3s;
             cursor: pointer;
+            z-index: 9;
         }
+
         .carousel .arrow::after {
-            content:'';
+            content: '';
             display: block;
             width: 6px;
             height: 6px;
             border-left: 1px solid #fff;
             border-bottom: 1px solid #fff;
         }
+
         .carousel .btn-pre {
-            left:5px;
-            transform:translateY(-50%)
+            left: 5px;
+            transform: translateY(-50%)
         }
+
         .carousel:hover .btn-pre {
             opacity: 1;
-            transform:translate(50%,-50%)
+            transform: translate(50%, -50%)
         }
+
         .carousel .btn-next {
             right: 5px;
-            transform:translateY(-50%)
+            transform: translateY(-50%)
         }
+
         .carousel:hover .btn-next {
             opacity: 1;
-            transform:translate(-50%,-50%)
+            transform: translate(-50%, -50%)
         }
-        .carousel .arrow.btn-pre::after{
+
+        .carousel .arrow.btn-pre::after {
             transform: rotate(45deg);
         }
-        .carousel .arrow.btn-next::after{
+
+        .carousel .arrow.btn-next::after {
             transform: rotate(-135deg);
         }
+        /* 图标的z-index必须比panels的大，才能在上面 */
         .carousel .indicators {
             position: absolute;
-            bottom:10px;
-            left:50%;
+            bottom: 10px;
+            left: 50%;
             transform: translateX(-50%);
             list-style: none;
-            margin:0;
-            padding:0;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: space-around;
             width: 200px;
+            z-index: 9;
         }
 
         .carousel .indicators>li {
@@ -106,22 +126,25 @@
             height: 2px;
             padding: 5px 0;
             cursor: pointer;
-            
+
         }
+
         .carousel .indicators>li::after {
             content: '';
             display: block;
             width: 30px;
             height: 2px;
-            border-radius:2px;
+            border-radius: 2px;
             transition: all .3s;
-           background:rgb(170, 169, 169); 
+            background: rgb(170, 169, 169);
         }
-        .carousel .indicators>li.active::after{
+
+        .carousel .indicators>li.active::after {
             background: #fff;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>carousel</h2>
@@ -143,72 +166,91 @@
                 <li></li>
             </ul>
         </div>
+        <div class="carousel">
+            <div class="panels">
+                <a href="#1" class="active"></a>
+                <a href="#2"></a>
+                <a href="#3"></a>
+                <a href="#4"></a>
+            </div>
+            <div class="arrows">
+                <button class="arrow btn-pre"></button>
+                <button class="arrow btn-next"></button>
+            </div>
+            <ul class="indicators">
+                <li class="active"></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
     </div>
 </body>
+
 </html>
 <script type="text/javascript">
-    const $ = node =>document.querySelector(node)
-    const $$ = node =>document.querySelectorAll(node)
-    const $pre = $('.carousel .btn-pre')
-    const $next =$('.carousel .btn-next')
-    const $$panels = $$('.carousel .panels>a')
-    const $$indicators = $$('.carousel .indicators>li')
+    class Carousel {
+        constructor($root) {
+            this.$root = $root
+            this.$pre = $root.querySelector('.btn-pre')
+            this.$next = $root.querySelector('.btn-next')
+            this.$$panels = $root.querySelectorAll('.panels>a')
+            this.$$indicators = $root.querySelectorAll('.indicators>li')
 
-    const getIndex = ()=>[...$$panels].indexOf($('.carousel .panels>a.active'))
-    const getPreIndex = ()=>(getIndex()-1+$$panels.length)%$$panels.length
-    const getNextIndex =()=>(getIndex()+1)%$$panels.length
-
-    const setPanels = index =>{
-            $$panels.forEach($panel=>{
+            this.bind()
+        }
+        getIndex() {
+            return [...this.$$panels].indexOf(this.$root.querySelector('.panels>a.active'))
+        }
+        getPreIndex() {
+            return (this.getIndex() - 1 + this.$$panels.length) % this.$$panels.length
+        }
+        getNextIndex() {
+            return (this.getIndex() + 1) % this.$$panels.length
+        }
+        setPanels(index) {
+            this.$$panels.forEach($panel => {
                 $panel.classList.remove('active')
             })
-            $$panels[index].classList.add('active')
+            this.$$panels[index].classList.add('active')
         }
-    const setIndecators = index =>{
-        $$indicators.forEach($indic=>{
-            $indic.classList.remove('active')
-        })
-        $$indicators[index].classList.add('active')
-    }
-    // function getIndex(){
-    //     let $active = $('.carousel .panels>a.active')
-    //     let index = [...$$panels].indexOf($active)
-    //     return index
-    // }
-    
-    // function getPreIndex(){
-    //     return (getIndex()-1+$$panels.length)%$$panels.length
-    // }
-    // function getNextIndex(){
-    //     return (getIndex()+1)%$$panels.length
-    // }
-    // function setPanels(index){
-    //     $$panels.forEach($panel=>{
-    //         $panel.classList.remove('active')
-    //     })
-    //     $$panels[index].classList.add('active')
-    // }
-    // function setIndecators(index){
-    //     $$indicators.forEach($indic=>{
-    //         $indic.classList.remove('active')
-    //     })
-    //     $$indicators[index].classList.add('active')
-    // }
-    $pre.onclick = function(){
-        let index = getPreIndex()
-        setPanels(index)
-        setIndecators(index)
-    }
-    $next.onclick = function(){
-        let index = getNextIndex()
-        setPanels(index)
-        setIndecators(index)
-    }
-    $$indicators.forEach($node=>{
-        $node.onclick = function(e){
-            let index = [...$$indicators].indexOf(e.target)
-            setPanels(index)
-            setIndecators(index)
+        setIndecators(index) {
+            this.$$indicators.forEach($indic => {
+                $indic.classList.remove('active')
+            })
+            this.$$indicators[index].classList.add('active')
         }
+        bind(){
+            let self = this
+            this.$pre.onclick = ()=>this.preOnclick()//箭头函数this指向本类
+            this.$next.onclick = function(){//其他函数this指向调用方（this.$next）
+                self.nextOnclick()
+            }
+            this.indicatorOnclick()
+        }
+        preOnclick() {
+            let index = this.getPreIndex()
+            this.setPanels(index)
+            this.setIndecators(index)
+        }
+        nextOnclick() {
+            let index = this.getNextIndex()
+            this.setPanels(index)
+            this.setIndecators(index)
+        }
+        indicatorOnclick() {
+            let self = this
+            this.$$indicators.forEach($node => {
+                $node.onclick = function (e) {
+                    let index = [...self.$$indicators].indexOf(e.target)
+                    self.setPanels(index)
+                    self.setIndecators(index)
+                }
+            })
+        }
+    }
+    document.querySelectorAll('.carousel').forEach($node=>{
+        new Carousel($node)
     })
+    //new carousel(document.querySelector('.carousel'))
 </script>
