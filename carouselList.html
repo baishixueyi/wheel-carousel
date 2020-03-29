@@ -187,11 +187,13 @@
             setTimeout(() => {
                 css($from,{
                 transform:`translateX(${direction==='left'?'-':''}100%)`,
-                transition: `all .3s`
+                transition: `all .3s`,
+                    zIndex:4
                 })
                 css($to,{
                 transform:`translateX(0)`,
-                transition: `all .3s`
+                transition: `all .3s`,
+                    zIndex:5
                 })
             });
         },
